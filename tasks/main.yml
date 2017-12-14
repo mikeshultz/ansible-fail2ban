@@ -10,6 +10,17 @@
     - fail2ban
     - fail2ban-install
 
+- name: Check if firewalld is installed on RedHat based systems
+  yum:
+    list: firewalld
+  register: pkg
+
+- name: Install fail2ban-firewalld on RedHat based systems
+  yum:
+    name: fail2ban-firewalld
+    state: present
+  when: ansible_os_family == "RedHat" and pkg.results[0].yumstate == 'installed'
+
 - name: update configuration file - /etc/fail2ban/fail2ban.local
   template:
     src: etc/fail2ban/fail2ban.local.j2
